@@ -23,7 +23,7 @@ namespace AWSIM.Loader
         [HideInInspector]
         public string loaderSceneName = "LoaderScene";
 
-        private MapConfiguration mapConfiguration;
+        public MapConfiguration mapConfiguration {private set; get; }
 
         /// <summary>
         /// Map configuration.
@@ -54,13 +54,6 @@ namespace AWSIM.Loader
             Log(LogLevel.LOG_INFO, $"Loading scene {mapConfiguration.mapName}");
             spawnedMapName = mapConfiguration.mapName;
             return SceneManager.LoadSceneAsync(mapConfiguration.mapName, LoadSceneMode.Additive);
-        }
-
-        /// <summary>
-        /// Configure the scene
-        /// </summary>
-        public void ConfigureScene(Transform rootTransform = null)
-        {
         }
 
         /// <summary>

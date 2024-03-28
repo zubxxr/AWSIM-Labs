@@ -20,7 +20,7 @@ namespace AWSIM.Loader
 
         private Vector3 egoEulerAngles;
 
-        private EgoConfiguration egoConfiguration;
+        public EgoConfiguration egoConfiguration {private set; get; }
 
         private GameObject egoModel;
 
@@ -103,7 +103,7 @@ namespace AWSIM.Loader
             };
         }
 
-        private void SpawnEgo(Transform hierarchyParent)
+        public GameObject SpawnEgo(Transform hierarchyParent)
         {
             if (egoModel)
             {
@@ -117,19 +117,12 @@ namespace AWSIM.Loader
                 var egoInstance = Instantiate(egoModel, position, orientation);
 
                 egoInstance.gameObject.transform.SetParent(hierarchyParent);
+
+                return egoInstance;
             } else {
                 Log(LogLevel.LOG_ERROR, $"No ego prefab set.");
+                return null;
             }
-        }
-
-
-        /// <summary>
-        /// Configure scene
-        /// Spawns an Ego.
-        /// </summary>
-        public void ConfigureScene(Transform rootTransform = null)
-        {
-            SpawnEgo(rootTransform);
         }
 
         /// <summary>

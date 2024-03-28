@@ -124,10 +124,11 @@ namespace AWSIM.Loader
 
             // Then load simulation components
             AsyncOperation simulationLoad = simulationManager.LoadSimulation();
+            simulationLoad.allowSceneActivation = true;
             yield return new WaitUntil(() => simulationLoad.isDone);
 
             // Finally configure the scene
-            ConfigureScenes();
+            SimConfiguration.Configure(egoManager, mapManager, simulationManager);
 
             // Hide loading screen and gui
             loadingScreen.SetActive(false);
@@ -181,7 +182,7 @@ namespace AWSIM.Loader
                     Log(LogLevel.LOG_INFO, "Configuration file loaded.");
 
                     // Configure managers with configuration file.
-                    if (ConfigureManagers(configuration))
+                    if (LoadManagersConfig(configuration))
                     {
                         // Configuration went well. Load all scenes.
                         Load();
@@ -208,7 +209,7 @@ namespace AWSIM.Loader
         {
             var configuration = LoadConfigFromGUI();
 
-            if (ConfigureManagers(configuration))
+            if (LoadManagersConfig(configuration))
             {
                 Load();
             }
@@ -220,6 +221,7 @@ namespace AWSIM.Loader
             {
                 AWSIMConfiguration simulationConfig = new AWSIMConfiguration();
                 simulationConfig.mapConfiguration.mapName = mapManager.mapUISelecor.options[mapManager.mapUISelecor.value].text;
+                simulationConfig.mapConfiguration.useShadows = false; // Set shadows default to false.
                 simulationConfig.simulationConfiguration.useTraffic = simulationManager.mapTrafficToggle.isOn;
                 simulationConfig.simulationConfiguration.timeScale = 1.0f; //TODO: Time scale is not yet implemented on the GUI.
                 simulationConfig.egoConfiguration.egoVehicleName = egoManager.egoUISelecor.options[egoManager.egoUISelecor.value].text;
@@ -253,7 +255,7 @@ namespace AWSIM.Loader
             }
         }
 
-        bool ConfigureManagers(AWSIMConfiguration awsimConfig)
+        bool LoadManagersConfig(AWSIMConfiguration awsimConfig)
         {
             if (usingConfigFile && !configFileLoaded)
             {
@@ -316,18 +318,6 @@ namespace AWSIM.Loader
         void Load()
         {
             StartCoroutine(LoadCoroutine());
-        }
-
-        void ConfigureScenes()
-        {
-            Scene simulationScene = SceneManager.GetSceneByName(simulationManager.simulationSceneName);
-            Scene mapScene = SceneManager.GetSceneByName(mapManager.spawnedMapName);
-
-            egoManager.ConfigureScene(simulationScene.GetRootGameObjects()[0].transform);
-            mapManager.ConfigureScene(mapScene.GetRootGameObjects()[0].transform);
-            simulationManager.ConfigureScene();
-
-            SceneManager.SetActiveScene(mapScene);
         }
 
         void Log(LogLevel level, string message)

@@ -18,6 +18,12 @@ namespace AWSIM
             canvasGroup.alpha = 0.0f;
         }
 
+        public void SetFollowCamera(FollowCamera camera)
+        {
+            followCamera = camera;
+            OnEnable();
+        }
+
         void OnEnable()
         {
             if(followCamera != null)

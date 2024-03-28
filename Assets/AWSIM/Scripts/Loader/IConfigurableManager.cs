@@ -18,11 +18,6 @@ namespace AWSIM.Loader
         public void LoadUI();
 
         /// <summary>
-        /// Configure the scene.
-        /// </summary>
-        public void ConfigureScene(Transform rootTransform);
-
-        /// <summary>
         /// Log callback.
         /// </summary>
         public Action<LogLevel, string> Log { get; set; }

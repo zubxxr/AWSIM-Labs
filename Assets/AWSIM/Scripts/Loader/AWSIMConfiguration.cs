@@ -7,6 +7,7 @@ namespace AWSIM.Loader
     public class MapConfiguration
     {
         public string mapName;
+        public bool useShadows;
     }
 
     [Serializable]

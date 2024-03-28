@@ -1,6 +1,7 @@
 {
     "mapConfiguration": {
-        "mapName": "Shinjuku"
+        "mapName": "Shinjuku",
+        "useShadows": false
     },
     "simulationConfiguration": {
         "useTraffic": true,

@@ -9,7 +9,7 @@ namespace AWSIM.Loader
     {
         public string simulationSceneName = "AWSIMSimulation";
         [HideInInspector]
-        public SimulationConfiguration simulationConfiguration;
+        public SimulationConfiguration simulationConfiguration  {private set; get; }
         public Toggle mapTrafficToggle;
         public Action<LogLevel, string> Log { get; set; }
 
@@ -22,25 +22,6 @@ namespace AWSIM.Loader
         {
             Log(LogLevel.LOG_INFO, $"Loading simulation");
             return SceneManager.LoadSceneAsync(simulationSceneName, LoadSceneMode.Additive);
-        }
-
-        public void ConfigureScene(Transform rootTransform = null)
-        {
-            // Set traffic on/off
-            var trafficSims = GameObject.FindObjectsOfType<TrafficSimulation.TrafficManager>();
-            foreach (var trafficSim in trafficSims)
-            {
-                trafficSim.gameObject.SetActive(simulationConfiguration.useTraffic);
-            }
-
-            // Set Ego position manager
-            Scripts.UI.EgoVehiclePositionManager positionManager = GameObject.FindObjectOfType<Scripts.UI.EgoVehiclePositionManager>();
-            positionManager.InitializeEgoTransform(GameObject.FindObjectOfType<Vehicle>().transform);
-
-            // Set scene time scale
-            DemoUI demoUi = GameObject.FindObjectOfType<DemoUI>();
-            demoUi.SetTimeScale(simulationConfiguration.timeScale);
-            demoUi.TimeScaleSlider.value = simulationConfiguration.timeScale;
         }
 
         public void LoadUI()
