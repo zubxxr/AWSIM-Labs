@@ -111,7 +111,7 @@ namespace AWSIM
                     material = meshRenderer.materials[materialIndex];
                     material.EnableKeyword("_EMISSION");
                     defaultEmissionColor = material.GetColor(EmissionColor);
-                  //  defaultExposureWeight = material.GetFloat(EmissionExposureWeight);
+                    //  defaultExposureWeight = material.GetFloat(EmissionExposureWeight);
                 }
             }
 
@@ -411,7 +411,7 @@ namespace AWSIM
             visualObjectRoot.SetActive(isActive);
         }
 
-        // Draw bounding box 
+        // Draw bounding box
         private void OnDrawGizmos()
         {
             // Cache Gizmos default values.

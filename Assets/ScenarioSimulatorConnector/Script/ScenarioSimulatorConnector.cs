@@ -42,7 +42,7 @@ namespace AWSIM
         }
 
         private void Initialize()
-        {       
+        {
             requestProcessor.Initialize();
         }
 
@@ -70,13 +70,13 @@ namespace AWSIM
         #region [Life Cycle - Thread]
 
         private void StartServerResponseThread()
-        {            
+        {
             thread = ServerResponseThread();
         }
 
         private void StopServerResponseThread()
         {
-            if(thread != null)
+            if (thread != null)
             {
                 thread.Abort();
                 thread = null;
@@ -94,14 +94,14 @@ namespace AWSIM
                 using (ZContext context = new ZContext())
                 {
                     using (ZSocket responseSocket = new ZSocket(context, ZSocketType.REP))
-                    {            
+                    {
                         responseSocket.Bind(serverResponseAdress);
 
                         ZPollItem pollItem = ZPollItem.CreateReceiver();
                         ZError zError;
                         ZMessage zMessage;
 
-                        while(true)
+                        while (true)
                         {
                             // pull message when received or wait 10 sec and check for errors
                             if (responseSocket.PollIn(pollItem, out zMessage, out zError))
@@ -138,8 +138,8 @@ namespace AWSIM
                                     Debug.LogWarning("[ZMQ ERROR] " + zError);
                                 }
                             }
-                        }                       
-                   }
+                        }
+                    }
                 }
             });
             thread.Name = "ServerResponse";

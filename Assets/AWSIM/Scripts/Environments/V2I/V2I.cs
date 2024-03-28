@@ -18,7 +18,7 @@ namespace AWSIM
         private TrafficLight[] allTrafficLights;
 
         public double egoDistanceToTrafficSignals = 150.0;
-        
+
         public class OutputData
         {
             public TrafficLight[] trafficLights;
@@ -65,7 +65,7 @@ namespace AWSIM
                 var distance2D = GeometryUtility.Distance2D(trafficLights[i].transform.position, position);
                 var trafficLightLaneletID = trafficLights[i].GetComponentInParent<TrafficLightLaneletID>();
 
-                if(distance2D <= radius && trafficLightLaneletID != null && trafficLightLaneletID.relationID != null && trafficLightLaneletID.relationID.Count != 0)
+                if (distance2D <= radius && trafficLightLaneletID != null && trafficLightLaneletID.relationID != null && trafficLightLaneletID.relationID.Count != 0)
                 {
                     filteredLights.Add(trafficLights[i]);
                 }
