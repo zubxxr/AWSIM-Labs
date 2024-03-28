@@ -1,11 +1,8 @@
 name: buildtest
 on:
-  schedule:
-    - cron: 0 0 * * *
-  pull_request:
-  push:
+  pull_request_target:
+    types: [ assigned, opened, synchronize, reopened ]
     branches:
-      - master
       - main
   workflow_dispatch:
 
