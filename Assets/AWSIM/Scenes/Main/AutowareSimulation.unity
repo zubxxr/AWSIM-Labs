@@ -167,6 +167,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 203643521}
     m_Modifications:
+    - target: {fileID: 5984117683371609910, guid: 58d73df60b244d146bdf5f5896f78355, type: 3}
+      propertyPath: egoVehicleTransform
+      value: 
+      objectReference: {fileID: 1222839950}
+    - target: {fileID: 5984117683371609913, guid: 58d73df60b244d146bdf5f5896f78355, type: 3}
+      propertyPath: trafficSignalsTopic
+      value: /perception/traffic_light_recognition/external/traffic_signals
+      objectReference: {fileID: 0}
     - target: {fileID: 7194879542207918458, guid: 58d73df60b244d146bdf5f5896f78355, type: 3}
       propertyPath: m_Name
       value: Nishishinjuku RandomTraffic
