@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 1911152051}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1110,9 +1109,9 @@ RectTransform:
   - {fileID: 598773923}
   m_Father: {fileID: 2100303025}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 96.25, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 96.25, y: -80}
   m_SizeDelta: {x: 192.5, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &129670042
@@ -2678,7 +2677,6 @@ GameObject:
   - component: {fileID: 543989982}
   - component: {fileID: 543989983}
   - component: {fileID: 543989984}
-  - component: {fileID: 543989985}
   m_Layer: 0
   m_Name: AutowareSimulation
   m_TagString: Untagged
@@ -2762,28 +2760,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiSideBarHandler: {fileID: 412951388}
---- !u!114 &543989985
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 543989979}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e421f28d2b9935689786530a139f607, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _birdEyeCameraInitialHeight: 200
-  _cameraOrthographicSizeMinimum: 3
-  _cameraOrthographicSizeMaximum: 150
-  _zoomChangeMultiplier: 10
-  _zoomTime: 0.1
-  _dragPanMultiplier: 0.2
-  _keyPanSpeed: 50
-  _keyPanLerp: 0.5
-  _targetFollowOffsetX: 0
-  _targetFollowOffsetZ: 0
 --- !u!1 &546765079
 GameObject:
   m_ObjectHideFlags: 0
@@ -4261,7 +4237,7 @@ GameObject:
   - component: {fileID: 939690761}
   m_Layer: 5
   m_Name: CameraOutputCanvas
-  m_TagString: Untagged
+  m_TagString: CameraOutputCanvas
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5391,9 +5367,9 @@ RectTransform:
   - {fileID: 1317468420}
   m_Father: {fileID: 2100303025}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 96.25, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 96.25, y: -230}
   m_SizeDelta: {x: 192.5, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1194537306
@@ -6462,9 +6438,9 @@ RectTransform:
   - {fileID: 1021800942}
   m_Father: {fileID: 2100303025}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 96.25, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 96.25, y: -345}
   m_SizeDelta: {x: 192.5, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1427845714
@@ -7554,8 +7530,8 @@ RectTransform:
   - {fileID: 4359775064103456631}
   m_Father: {fileID: 2100303025}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 96.25, y: 0}
   m_SizeDelta: {x: 192.5, y: 0}
   m_Pivot: {x: 0.5, y: 1}
