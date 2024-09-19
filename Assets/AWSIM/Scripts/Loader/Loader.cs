@@ -1,6 +1,7 @@
 using System.Collections;
 using System;
 using System.IO;
+using AWSIM.Scripts.Scene;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -36,20 +37,24 @@ namespace AWSIM.Loader
         [SerializeField]
         [Tooltip("Should the loader look for a configuration file in '_Data' or 'Assets' directory.")]
         private bool useLocalFile = false;
+
         [SerializeField]
         [Tooltip("CLI arg to fetch the configuration file path.")]
         private string configParam = "--config";
+
         [SerializeField]
-        [Tooltip("If the local file is used, it looks for a file tiwh default name.")]
+        [Tooltip("If the local file is used, it looks for a file with default name.")]
         private string defaultConfigFilename = "config.json";
 
         [Header("Managers")]
         [SerializeField]
         [Tooltip("Manager for setting and configuring the Ego vehicle.")]
         private EgosManager egoManager;
+
         [SerializeField]
         [Tooltip("Manager for setting and configuring the map environment.")]
         private MapManager mapManager;
+
         [SerializeField]
         [Tooltip("Manager for setting and configuring the simulation.")]
         private SimulationManager simulationManager;
@@ -84,10 +89,15 @@ namespace AWSIM.Loader
         private GameObject loadingScreen;
 
         [Header("Parameters")]
-        [SerializeField] private int targetFramerate;
+        [SerializeField]
+        private int targetFramerate;
 
         bool usingConfigFile = false;
         bool configFileLoaded = false;
+
+        private SceneMetadataDatabase sceneMetadataDatabase;
+        private const string SceneMetaDatabasePath = "SceneMetadata/SceneMetadataDatabase";
+
 
         IEnumerator ReLoadCoroutine()
         {
@@ -116,7 +126,8 @@ namespace AWSIM.Loader
             rootGuiObject.SetActive(true);
 
             // Show loading screen
-            loadingScreen.gameObject.GetComponentInChildren<Text>().text = $"Loading map '{mapManager.MapConfiguration.mapName}'...";
+            loadingScreen.gameObject.GetComponentInChildren<Text>().text =
+                $"Loading map '{mapManager.MapConfiguration.mapName}'...";
             loadingScreen.SetActive(true);
             yield return new WaitForEndOfFrame();
 
@@ -132,6 +143,7 @@ namespace AWSIM.Loader
 
             // Finally configure the scene
             SimConfiguration.Configure(egoManager, mapManager, simulationManager);
+
 
             // Hide loading screen and gui
             loadingScreen.SetActive(false);
@@ -151,6 +163,9 @@ namespace AWSIM.Loader
             simulationManager.Log += Log;
 
             Application.targetFrameRate = targetFramerate;
+
+            // Load the SceneMetadataDatabase from the Resources folder
+            LoadSceneMetadataDatabase(SceneMetaDatabasePath);
 
             StartLoader();
         }
@@ -200,7 +215,8 @@ namespace AWSIM.Loader
                 }
             }
             else
-            { // If config file is not found, fallback to GUI.
+            {
+                // If config file is not found, fallback to GUI.
                 Log(LogLevel.LOG_INFO, "No configuration file provided.");
                 manualCanvas.SetActive(true);
 
@@ -217,11 +233,37 @@ namespace AWSIM.Loader
         public void OnLoadButtonPressed()
         {
             var configuration = LoadConfigFromGUI();
+            var sceneName = mapManager.mapUISelecor.options[mapManager.mapUISelecor.value].text;
 
-            if (LoadManagersConfig(configuration))
+            // check for ss2 scene then start load process
+            if (IsSceneSs2Scene(sceneName))
             {
-                Load();
+                StartCoroutine(LoadSs2Scene(sceneName));
             }
+            else
+            {
+                if (LoadManagersConfig(configuration))
+                {
+                    Load();
+                }
+            }
+        }
+
+        private IEnumerator LoadSs2Scene(string sceneName)
+        {
+            // Show loading screen
+            loadingScreen.gameObject.GetComponentInChildren<Text>().text =
+                $"Loading map '{sceneName}'...";
+            loadingScreen.SetActive(true);
+            yield return new WaitForEndOfFrame();
+
+            var sceneLoading = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+            sceneLoading.allowSceneActivation = true;
+            yield return new WaitUntil(() => sceneLoading.isDone);
+
+            // Hide loading screen and gui
+            loadingScreen.SetActive(false);
+            rootGuiObject.SetActive(false);
         }
 
         AWSIMConfiguration LoadConfigFromGUI()
@@ -229,15 +271,18 @@ namespace AWSIM.Loader
             if (!usingConfigFile)
             {
                 AWSIMConfiguration simulationConfig = new AWSIMConfiguration();
-                simulationConfig.mapConfiguration.mapName = mapManager.mapUISelecor.options[mapManager.mapUISelecor.value].text;
+                simulationConfig.mapConfiguration.mapName =
+                    mapManager.mapUISelecor.options[mapManager.mapUISelecor.value].text;
                 simulationConfig.mapConfiguration.useShadows = false; // Set shadows default to false.
                 simulationConfig.simulationConfiguration.useTraffic = simulationManager.mapTrafficToggle.isOn;
                 simulationConfig.simulationConfiguration.timeScale = 1.0f;
-                simulationConfig.egoConfiguration.egoVehicleName = egoManager.egoUISelecor.options[egoManager.egoUISelecor.value].text;
+                simulationConfig.egoConfiguration.egoVehicleName =
+                    egoManager.egoUISelecor.options[egoManager.egoUISelecor.value].text;
                 simulationConfig.egoConfiguration.egoPosition = egoManager.GetPositionFromUI();
                 simulationConfig.egoConfiguration.egoEulerAngles = egoManager.GetEulersFromUI();
                 return simulationConfig;
             }
+
             return null;
         }
 
@@ -278,12 +323,14 @@ namespace AWSIM.Loader
             {
                 if (usingConfigFile) loadButton.SetActive(false);
                 return false;
-            };
+            }
+
             if (!mapManager.LoadConfig(awsimConfig))
             {
                 if (usingConfigFile) loadButton.SetActive(false);
                 return false;
-            };
+            }
+
             if (!simulationManager.LoadConfig(awsimConfig))
             {
                 if (usingConfigFile) loadButton.SetActive(false);
@@ -304,6 +351,7 @@ namespace AWSIM.Loader
                     return cmdArgs[i + 1];
                 }
             }
+
             return null;
         }
 
@@ -322,16 +370,42 @@ namespace AWSIM.Loader
                 path = appPath + separator + defaultConfigFilename;
                 return true;
             }
+
             path = "";
             return false;
         }
 
-        void Load()
+        private void Load()
         {
             StartCoroutine(LoadCoroutine());
         }
 
-        void Log(LogLevel level, string message)
+        private void LoadSceneMetadataDatabase(string path)
+        {
+            sceneMetadataDatabase = Resources.Load<SceneMetadataDatabase>(path);
+
+            if (sceneMetadataDatabase == null)
+            {
+                Debug.LogError("SceneMetadataDatabase not found in Resources folder.");
+                Log(LogLevel.LOG_ERROR, "SceneMetadataDatabase not found in Resources folder");
+            }
+        }
+
+        private bool IsSceneSs2Scene(string sceneName)
+        {
+            var isSs2Scene = false;
+            foreach (var sceneInfo in sceneMetadataDatabase.sceneInfos)
+            {
+                if (sceneInfo.sceneName == sceneName)
+                {
+                    isSs2Scene = sceneInfo.isSs2Scene;
+                }
+            }
+
+            return isSs2Scene;
+        }
+
+        private void Log(LogLevel level, string message)
         {
             switch (level)
             {

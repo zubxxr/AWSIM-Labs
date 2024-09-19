@@ -82,13 +82,14 @@ Features which are not supported when connected with AWSIM Labs are listed below
     - `detectedObjectMissingProbability`
     - `randomSeed`
 
-If those features are curcial for the scenario's execution, the scenario might not work properly.
+If those features are crucial for the scenario's execution, the scenario might not work properly.
 
 ## AWSIM Labs scene preparation to work with `scenario_simulator_v2`
 
 * Disable or remove random traffic and any pre-spawned NPCs
 * Disable or remove V2I traffic lights publishing
 * Disable or remove the clock publisher
+* Disable or remove the EventSystem object
 
 ![removed_objects.png](removed_objects.png)
 
