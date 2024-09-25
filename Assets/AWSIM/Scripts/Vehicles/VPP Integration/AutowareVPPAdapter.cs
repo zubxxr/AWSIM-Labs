@@ -340,7 +340,7 @@ namespace AWSIM.Scripts.Vehicles.VPP_Integration
             if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit hit, Mathf.Infinity))
             {
                 PositionInput = new Vector3(PositionInput.x, hit.point.y + _updatePositionOffsetY, PositionInput.z);
-                transform.SetPositionAndRotation(PositionInput, RotationInput);
+                _vehicleController.HardReposition(PositionInput, RotationInput);
             }
             else
             {
@@ -350,6 +350,7 @@ namespace AWSIM.Scripts.Vehicles.VPP_Integration
         }
 
         // TODO: Method to switch control mode based on user input (mozzz)
+        // Currently it is updated from UI with keyboard toggle.
         private void UserSwitchControlMode()
         {
         }
