@@ -1,10 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using System;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using System.Linq;
 using AWSIM.Scripts.UI.Toggle;
 using AWSIM.Scripts.UI;
 using AWSIM.TrafficSimulation;
@@ -13,7 +8,7 @@ namespace AWSIM.Loader
 {
     static class SimConfiguration
     {
-        static public void Configure(EgosManager egoManager, MapManager mapManager, SimulationManager simulationManager)
+        public static void Configure(EgosManager egoManager, MapManager mapManager, SimulationManager simulationManager)
         {
             //////////////////////
             // Levels load order:
@@ -86,6 +81,9 @@ namespace AWSIM.Loader
 
             UIMainCameraToggle uiMainCameraToggle = GameObject.FindObjectOfType<UIMainCameraToggle>();
             uiMainCameraToggle.Activate();
+
+            VehicleDashboard vehicleDashboard = GameObject.FindObjectOfType<VehicleDashboard>();
+            vehicleDashboard.Activate();
 
             // Set traffic on/off
             var trafficSims = GameObject.FindObjectsOfType<TrafficSimulation.TrafficManager>();
