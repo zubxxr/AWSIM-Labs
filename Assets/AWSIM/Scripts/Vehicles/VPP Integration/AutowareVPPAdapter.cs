@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using AWSIM.Scripts.UI;
 using AWSIM.Scripts.Vehicles.VPP_Integration.Enums;
 using AWSIM.Scripts.Vehicles.VPP_Integration.IVehicleControlModes;
 using UnityEngine;
@@ -130,7 +131,7 @@ namespace AWSIM.Scripts.Vehicles.VPP_Integration
         // RViz2 Update position variables
         [Header("RViz2 Update Position")]
         [SerializeField]
-        private float _updatePositionOffsetY = 1.33f;
+        private float _updatePositionOffsetY = 0.5f;
 
         [SerializeField] private float _updatePositionRayOriginY = 1000f;
 
@@ -146,6 +147,9 @@ namespace AWSIM.Scripts.Vehicles.VPP_Integration
         // Constants used for conversion between VPP and Autoware
         private const float VppToAutowareMultiplier = 0.0001f;
         private const int AutowareToVppMultiplier = 10000;
+
+        // Event holders to subscribe
+        private EgoVehiclePositionManager _egoVehiclePositionManager;
 
         private void Awake()
         {
@@ -172,6 +176,13 @@ namespace AWSIM.Scripts.Vehicles.VPP_Integration
             // reset vpp stuff for multi-scene loading (no idea why, but it works)
             _vehicleController.enabled = false;
             _vehicleController.enabled = true;
+
+            // Subscribe to events
+            _egoVehiclePositionManager = FindObjectOfType<EgoVehiclePositionManager>();
+            if (_egoVehiclePositionManager != null)
+            {
+                _egoVehiclePositionManager.OnEgoReset += ResetEgoPosition;
+            }
         }
 
         // private void Update()
@@ -341,12 +352,24 @@ namespace AWSIM.Scripts.Vehicles.VPP_Integration
             {
                 PositionInput = new Vector3(PositionInput.x, hit.point.y + _updatePositionOffsetY, PositionInput.z);
                 _vehicleController.HardReposition(PositionInput, RotationInput);
+                _vehicleController.data.bus[Channel.Input][InputData.AutomaticGear] = (int)Gearbox.AutomaticGear.P;
+                _cameraController.ResetCamera();
             }
             else
             {
                 Debug.LogWarning(
                     "No mesh or collider detected on target location. Please ensure that the target location is on a mesh or collider.");
             }
+        }
+
+        /// <summary>
+        /// Reset the ego vehicle to the spawn point.
+        /// </summary>
+        private void ResetEgoPosition(Vector3 position, Quaternion rotation)
+        {
+            _vehicleController.HardReposition(position, rotation, true);
+            _vehicleController.data.bus[Channel.Input][InputData.AutomaticGear] = (int)Gearbox.AutomaticGear.P;
+            _cameraController.ResetCamera();
         }
 
         // TODO: Method to switch control mode based on user input (mozzz)
@@ -379,6 +402,12 @@ namespace AWSIM.Scripts.Vehicles.VPP_Integration
                 _throttleAmount = 0;
                 _brakeAmount = 0;
             }
+        }
+
+        private void OnDestroy()
+        {
+            // Unsubscribe from events
+            _egoVehiclePositionManager.OnEgoReset -= ResetEgoPosition;
         }
     }
 }
