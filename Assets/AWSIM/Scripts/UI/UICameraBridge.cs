@@ -31,17 +31,51 @@ namespace AWSIM.Scripts.UI
 
             cameraOutput.transform.SetParent(cameraOutputCanvas.transform, false);
 
-            // Configure RectTransform for bottom left position with specified offsets
             var rectTransform = cameraOutput.GetComponent<RectTransform>();
             rectTransform.anchorMin = Vector2.zero;
             rectTransform.anchorMax = Vector2.zero;
             rectTransform.anchoredPosition = new Vector2(startXOffset, startYOffset);
-            // Width will be adjusted by AspectRatioFitter, only set height here
             rectTransform.sizeDelta = new Vector2(0, height);
 
             rawImage = cameraOutput.GetComponent<RawImage>();
             aspectRatioFitter = cameraOutput.GetComponent<AspectRatioFitter>();
             aspectRatioFitter.aspectMode = AspectRatioFitter.AspectMode.HeightControlsWidth;
+
+            // Add Vehicle Label
+            var labelGO = new GameObject("VehicleLabel", typeof(RectTransform), typeof(CanvasRenderer), typeof(Text));
+            labelGO.transform.SetParent(cameraOutput.transform, false);
+
+            var labelText = labelGO.GetComponent<Text>();
+
+            // Traverse hierarchy to find the vehicle GameObject (contains "EgoVehicle")
+            Transform current = transform;
+            while (current != null)
+            {
+                if (current.name.Contains("EgoVehicle"))
+                {
+                    labelText.text = current.name;
+                    break;
+                }
+                current = current.parent;
+            }
+
+            // Optional fallback
+            if (current == null)
+            {
+                labelText.text = "Unknown Vehicle";
+            }
+
+            labelText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            labelText.fontSize = 24;
+            labelText.color = Color.white;
+            labelText.alignment = TextAnchor.UpperLeft;
+
+            var labelRect = labelGO.GetComponent<RectTransform>();
+            labelRect.anchorMin = new Vector2(0, 1);
+            labelRect.anchorMax = new Vector2(0, 1);
+            labelRect.pivot = new Vector2(0, 1);
+            labelRect.anchoredPosition = new Vector2(10, -10);
+            labelRect.sizeDelta = new Vector2(200, 40);
         }
 
         public void RenderCameraToUI(CameraSensor.CameraParameters camParams, Texture camRenderTex)
